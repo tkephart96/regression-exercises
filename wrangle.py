@@ -25,19 +25,19 @@ def wrangle_zillow(user=user,password=password,host=host):
     function drops unneeded columns and null values before returning the DataFrame.
     """
     # name of cached csv
-    filename = 'zillow2017.csv'
-    # wrangle from cached data
+    filename = 'zillow.csv'
+    # if cached data exist
     if os.path.isfile(filename):
         df = pd.read_csv(filename)
     # wrangle from sql db if not cached
     else:
         # read sql query into df
         # 261 is single family residential id
-        df = pd.read_sql('''select bedroomcnt
+        df = pd.read_sql('''select yearbuilt
+                                    , bedroomcnt
                                     , bathroomcnt
                                     , calculatedfinishedsquarefeet
                                     , taxvaluedollarcnt
-                                    , yearbuilt
                                     , taxamount
                                     , fips 
                             from properties_2017
@@ -47,4 +47,18 @@ def wrangle_zillow(user=user,password=password,host=host):
         df.to_csv(filename, index=False)
     # nulls account for less than 1% so dropping
     df = df.dropna()
+    # rename columns
+    df = df.rename(columns=({'yearbuilt':'year'
+                            ,'bedroomcnt':'beds'
+                            ,'bathroomcnt':'baths'
+                            ,'calculatedfinishedsquarefeet':'sqft'
+                            ,'taxvaluedollarcnt':'total_tax'
+                            ,'taxamount':'recent_tax'
+                            ,'fips':'county'}))
+    # map county to fips
+    df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
+    # make int
+    ints = ['year','beds','sqft','total_tax']
+    for i in ints:
+        df[i] = df[i].astype(int)
     return df
