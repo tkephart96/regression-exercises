@@ -58,6 +58,8 @@ def wrangle_zillow():
     for less than 1% of the data.
     """
     df = get_zillow()
+    # drop unneeded columns
+    df = df.drop(columns=['propertylandusetypeid','propertylandusedesc'])
     # nulls account for less than 1% so dropping
     df = df.dropna()
     return df
