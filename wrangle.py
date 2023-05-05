@@ -40,16 +40,11 @@ def wrangle_zillow(user=user,password=password,host=host):
                                     , yearbuilt
                                     , taxamount
                                     , fips 
-                                    , propertylandusetypeid
-                                    , propertylandusedesc
                             from properties_2017
-                            join propertylandusetype using(propertylandusetypeid)
                             where propertylandusetypeid = 261'''
                             , f'mysql+pymysql://{user}:{password}@{host}/zillow')
         # cache data locally
         df.to_csv(filename, index=False)
-    # drop unneeded columns
-    df = df.drop(columns=['propertylandusetypeid','propertylandusedesc'])
     # nulls account for less than 1% so dropping
     df = df.dropna()
     return df
