@@ -3,10 +3,11 @@
 ### IMPORTS ###
 
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
+from sklearn.model_selection import train_test_split
 from env import user,password,host
 
 ### ACQUIRE DATA ###
@@ -67,3 +68,10 @@ def wrangle_zillow(user=user,password=password,host=host):
     df = df[df.area < 25000].copy()
     df = df[df.tax_value < df.tax_value.quantile(.95)].copy()
     return df
+
+
+def split_zillow(df):
+    '''Split into train, validate, test with a 60/20/20 ratio'''
+    train_validate, test = train_test_split(df, test_size=.2, random_state=42)
+    train, validate = train_test_split(train_validate, test_size=.25, random_state=42)
+    return train, validate, test
