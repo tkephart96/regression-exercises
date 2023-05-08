@@ -13,16 +13,18 @@ from env import user,password,host
 
 def wrangle_zillow(user=user,password=password,host=host):
     """
-    This function wrangles data from a cached CSV or SQL database, drops unneeded columns and null
-    values, and returns a cleaned dataframe of Zillow property data.
+    This function wrangles data from a SQL database of Zillow properties, caches it locally, drops null
+    values, renames columns, maps county to fips, converts certain columns to integers, and handles
+    outliers.
     
     :param user: The username for accessing the MySQL database
-    :param password: Please make sure to keep your password secure and not share it with anyone
-    :param host: The host parameter is the address of the server where the MySQL database is hosted
-    :return: a pandas DataFrame containing cleaned and wrangled data from the Zillow database for single
-    family residential properties. The DataFrame includes columns for bedroom count, bathroom count,
-    calculated finished square footage, tax value in dollars, year built, tax amount, and FIPS code. The
-    function drops unneeded columns and null values before returning the DataFrame.
+    :param password: The password is unique per user saved in env
+    :param host: The host parameter is the address of the server where the Zillow database is hosted
+    :return: The function `wrangle_zillow` is returning a cleaned and wrangled pandas DataFrame
+    containing information on single family residential properties in Los Angeles, Orange, and Ventura
+    counties, including the year built, number of bedrooms and bathrooms, square footage, tax value,
+    property tax, and county. The DataFrame has been cleaned by dropping null values, renaming columns,
+    mapping county codes to county names, converting certain columns
     """
     # name of cached csv
     filename = 'zillow.csv'
@@ -51,14 +53,17 @@ def wrangle_zillow(user=user,password=password,host=host):
     df = df.rename(columns=({'yearbuilt':'year'
                             ,'bedroomcnt':'beds'
                             ,'bathroomcnt':'baths'
-                            ,'calculatedfinishedsquarefeet':'sqft'
-                            ,'taxvaluedollarcnt':'total_tax'
-                            ,'taxamount':'recent_tax'
+                            ,'calculatedfinishedsquarefeet':'area'
+                            ,'taxvaluedollarcnt':'tax_value'
+                            ,'taxamount':'prop_tax'
                             ,'fips':'county'}))
     # map county to fips
     df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
     # make int
-    ints = ['year','beds','sqft','total_tax']
+    ints = ['year','beds','area','tax_value']
     for i in ints:
         df[i] = df[i].astype(int)
+    # handle outliers
+    df = df[df.area < 25000].copy()
+    df = df[df.tax_value < df.tax_value.quantile(.95)].copy()
     return df
