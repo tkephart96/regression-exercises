@@ -5,8 +5,6 @@
 import os
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split
 from env import user,password,host
 
@@ -69,6 +67,7 @@ def wrangle_zillow(user=user,password=password,host=host):
     df = df[df.tax_value < df.tax_value.quantile(.95)].copy()
     return df
 
+### SPLIT DATA ###
 
 def split_zillow(df):
     '''Split into train, validate, test with a 60/20/20 ratio'''
