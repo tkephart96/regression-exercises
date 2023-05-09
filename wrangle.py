@@ -1,4 +1,10 @@
-'''Wrangle Zillow Data'''
+'''
+Wrangle Zillow Data
+
+Functions:
+* wrangle_zillow
+* split_zillow
+'''
 
 ### IMPORTS ###
 
@@ -21,7 +27,7 @@ def wrangle_zillow(user=user,password=password,host=host):
     :param host: The host parameter is the address of the server where the Zillow database is hosted
     :return: The function `wrangle_zillow` is returning a cleaned and wrangled pandas DataFrame
     containing information on single family residential properties in Los Angeles, Orange, and Ventura
-    counties, including the year built, number of bedrooms and bathrooms, square footage, tax value,
+    counties, including the year built, number of bedrooms and bathrooms, square footage, property value,
     property tax, and county. The DataFrame has been cleaned by dropping null values, renaming columns,
     mapping county codes to county names, converting certain columns
     """
@@ -53,18 +59,20 @@ def wrangle_zillow(user=user,password=password,host=host):
                             ,'bedroomcnt':'beds'
                             ,'bathroomcnt':'baths'
                             ,'calculatedfinishedsquarefeet':'area'
-                            ,'taxvaluedollarcnt':'tax_value'
+                            ,'taxvaluedollarcnt':'prop_value'
                             ,'taxamount':'prop_tax'
                             ,'fips':'county'}))
     # map county to fips
     df.county = df.county.map({6037:'LA',6059:'Orange',6111:'Ventura'})
     # make int
-    ints = ['year','beds','area','tax_value']
+    ints = ['year','beds','area','prop_value']
     for i in ints:
         df[i] = df[i].astype(int)
     # handle outliers
     df = df[df.area < 25000].copy()
-    df = df[df.tax_value < df.tax_value.quantile(.95)].copy()
+    df = df[df.prop_value < df.prop_value.quantile(.95)].copy()
+    df = df.loc[df['beds']>0].copy()
+    df = df.loc[df['baths']>0].copy()
     return df
 
 ### SPLIT DATA ###
