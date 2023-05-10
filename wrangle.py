@@ -71,13 +71,12 @@ def wrangle_zillow(user=user,password=password,host=host):
     # handle outliers
     df = df[df.area < 25000].copy()
     df = df[df.prop_value < df.prop_value.quantile(.95)].copy()
-    df = df.loc[df['beds']>0].copy()
-    df = df.loc[df['baths']>0].copy()
+    df = df[(df['beds'] != 0) & (df['baths'] != 0)].copy()
     return df
 
 ### SPLIT DATA ###
 
-def split_zillow(df):
+def split_data(df):
     '''Split into train, validate, test with a 60/20/20 ratio'''
     train_validate, test = train_test_split(df, test_size=.2, random_state=42)
     train, validate = train_test_split(train_validate, test_size=.25, random_state=42)
