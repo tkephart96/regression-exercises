@@ -22,9 +22,6 @@ def plot_res(df,x,y,yhat):
     df = df.assign(res = (df[yhat] - df[y]))
     # plot
     sns.scatterplot(data=df,x=x,y=df['res'])
-    # make 0 noticeable
-    plt.axhline(0,color='black',alpha=.5)
-    plt.legend(loc='upper left',labels=['res','0'])
     plt.show()
 
 def reg_err(df,y,yhat,result=None):
