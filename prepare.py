@@ -19,7 +19,7 @@ import sklearn.preprocessing
 
 ### SCALERS ###
 
-def mm_zillow(train,validate,test):
+def mm_zillow(train,validate,test,scale=None):
     """
     The function applies the Min Max Scaler method to scale the numerical features of the train, validate,
     and test datasets.
@@ -34,15 +34,16 @@ def mm_zillow(train,validate,test):
     :return: three dataframes: Xtr (scaled training data), Xv (scaled validation data), and Xt (scaled
     test data).
     """
+    if scale is None:
+        scale = ['year','beds','baths','area','prop_tax']
     mm_scale = sklearn.preprocessing.MinMaxScaler()
     Xtr,Xv,Xt = train,validate,test
-    scale = ['year','beds','baths','area','prop_tax']
     Xtr[scale] = mm_scale.fit_transform(Xtr[scale])
     Xv[scale] = mm_scale.transform(Xv[scale])
     Xt[scale] = mm_scale.transform(Xt[scale])
     return Xtr, Xv, Xt
 
-def std_zillow(train,validate,test):
+def std_zillow(train,validate,test,scale=None):
     """
     The function applies the Standard Scaler method to scale the numerical features of the train, validate,
     and test datasets.
@@ -57,15 +58,16 @@ def std_zillow(train,validate,test):
     :return: three dataframes: Xtr (scaled training data), Xv (scaled validation data), and Xt (scaled
     test data).
     """
+    if scale is None:
+        scale = ['year','beds','baths','area','prop_tax']
     std_scale = sklearn.preprocessing.StandardScaler()
     Xtr,Xv,Xt = train,validate,test
-    scale = ['year','beds','baths','area','prop_tax']
     Xtr[scale] = std_scale.fit_transform(Xtr[scale])
     Xv[scale] = std_scale.transform(Xv[scale])
     Xt[scale] = std_scale.transform(Xt[scale])
     return Xtr, Xv, Xt
 
-def robs_zillow(train,validate,test):
+def robs_zillow(train,validate,test,scale=None):
     """
     The function applies the RobustScaler method to scale the numerical features of the train, validate,
     and test datasets.
@@ -80,16 +82,17 @@ def robs_zillow(train,validate,test):
     :return: three dataframes: Xtr (scaled training data), Xv (scaled validation data), and Xt (scaled
     test data).
     """
+    if scale is None:
+        scale = ['year','beds','baths','area','prop_tax']
     rob_scale = sklearn.preprocessing.RobustScaler()
     Xtr,Xv,Xt = train,validate,test
-    scale = ['year','beds','baths','area','prop_tax']
     Xtr[scale] = rob_scale.fit_transform(Xtr[scale])
     Xv[scale] = rob_scale.transform(Xv[scale])
     Xt[scale] = rob_scale.transform(Xt[scale])
     return Xtr, Xv, Xt
 
 
-def qtf_zillow(train,validate,test,out_dist='normal'):
+def qtf_zillow(train,validate,test,out_dist='normal',scale=None):
     """
     The function qtf_zillow applies quantile transformation to the numerical features of the input
     dataframes train, validate, and test.
@@ -105,9 +108,10 @@ def qtf_zillow(train,validate,test,out_dist='normal'):
     :return: three dataframes: Xtr (transformed training data), Xv (transformed validation data), and Xt
     (transformed test data).
     """
+    if scale is None:
+        scale = ['year','beds','baths','area','prop_tax']
     qt = sklearn.preprocessing.QuantileTransformer(output_distribution=out_dist)
     Xtr,Xv,Xt = train,validate,test
-    scale = ['year','beds','baths','area','prop_tax']
     Xtr[scale] = qt.fit_transform(Xtr[scale])
     Xv[scale] = qt.transform(Xv[scale])
     Xt[scale] = qt.transform(Xt[scale])
