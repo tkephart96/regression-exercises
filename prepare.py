@@ -37,10 +37,14 @@ def mm_zillow(train,validate,test,scale=None):
     if scale is None:
         scale = ['year','beds','baths','area','prop_tax']
     mm_scale = sklearn.preprocessing.MinMaxScaler()
-    Xtr,Xv,Xt = train,validate,test
-    Xtr[scale] = mm_scale.fit_transform(Xtr[scale])
-    Xv[scale] = mm_scale.transform(Xv[scale])
-    Xt[scale] = mm_scale.transform(Xt[scale])
+    Xtr,Xv,Xt = train[scale],validate[scale],test[scale]
+    Xtr = pd.DataFrame(mm_scale.fit_transform(train[scale]),train.index,scale)
+    Xv = pd.DataFrame(mm_scale.transform(validate[scale]),validate.index,scale)
+    Xt = pd.DataFrame(mm_scale.transform(test[scale]),test.index,scale)
+    for col in scale:
+        Xtr = Xtr.rename(columns={col: f'{col}_s'})
+        Xv = Xv.rename(columns={col: f'{col}_s'})
+        Xt = Xt.rename(columns={col: f'{col}_s'})
     return Xtr, Xv, Xt
 
 def std_zillow(train,validate,test,scale=None):
@@ -61,10 +65,14 @@ def std_zillow(train,validate,test,scale=None):
     if scale is None:
         scale = ['year','beds','baths','area','prop_tax']
     std_scale = sklearn.preprocessing.StandardScaler()
-    Xtr,Xv,Xt = train,validate,test
-    Xtr[scale] = std_scale.fit_transform(Xtr[scale])
-    Xv[scale] = std_scale.transform(Xv[scale])
-    Xt[scale] = std_scale.transform(Xt[scale])
+    Xtr,Xv,Xt = train[scale],validate[scale],test[scale]
+    Xtr = pd.DataFrame(std_scale.fit_transform(train[scale]),train.index,scale)
+    Xv = pd.DataFrame(std_scale.transform(validate[scale]),validate.index,scale)
+    Xt = pd.DataFrame(std_scale.transform(test[scale]),test.index,scale)
+    for col in scale:
+        Xtr = Xtr.rename(columns={col: f'{col}_s'})
+        Xv = Xv.rename(columns={col: f'{col}_s'})
+        Xt = Xt.rename(columns={col: f'{col}_s'})
     return Xtr, Xv, Xt
 
 def robs_zillow(train,validate,test,scale=None):
@@ -85,10 +93,14 @@ def robs_zillow(train,validate,test,scale=None):
     if scale is None:
         scale = ['year','beds','baths','area','prop_tax']
     rob_scale = sklearn.preprocessing.RobustScaler()
-    Xtr,Xv,Xt = train,validate,test
-    Xtr[scale] = rob_scale.fit_transform(Xtr[scale])
-    Xv[scale] = rob_scale.transform(Xv[scale])
-    Xt[scale] = rob_scale.transform(Xt[scale])
+    Xtr,Xv,Xt = train[scale],validate[scale],test[scale]
+    Xtr = pd.DataFrame(rob_scale.fit_transform(train[scale]),train.index,scale)
+    Xv = pd.DataFrame(rob_scale.transform(validate[scale]),validate.index,scale)
+    Xt = pd.DataFrame(rob_scale.transform(test[scale]),test.index,scale)
+    for col in scale:
+        Xtr = Xtr.rename(columns={col: f'{col}_s'})
+        Xv = Xv.rename(columns={col: f'{col}_s'})
+        Xt = Xt.rename(columns={col: f'{col}_s'})
     return Xtr, Xv, Xt
 
 
@@ -111,10 +123,14 @@ def qtf_zillow(train,validate,test,out_dist='normal',scale=None):
     if scale is None:
         scale = ['year','beds','baths','area','prop_tax']
     qt = sklearn.preprocessing.QuantileTransformer(output_distribution=out_dist)
-    Xtr,Xv,Xt = train,validate,test
-    Xtr[scale] = qt.fit_transform(Xtr[scale])
-    Xv[scale] = qt.transform(Xv[scale])
-    Xt[scale] = qt.transform(Xt[scale])
+    # Xtr,Xv,Xt = train[scale],validate[scale],test[scale]
+    Xtr = pd.DataFrame(qt.fit_transform(train[scale]),train.index,scale)
+    Xv = pd.DataFrame(qt.transform(validate[scale]),validate.index,scale)
+    Xt = pd.DataFrame(qt.transform(test[scale]),test.index,scale)
+    for col in scale:
+        Xtr = Xtr.rename(columns={col: f'{col}_s'})
+        Xv = Xv.rename(columns={col: f'{col}_s'})
+        Xt = Xt.rename(columns={col: f'{col}_s'})
     return Xtr, Xv, Xt
 
 ### ENCODE ###
